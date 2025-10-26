@@ -1,0 +1,4 @@
+*.csv
+*.jsonl
+*.yaml
+/swe_bench_results

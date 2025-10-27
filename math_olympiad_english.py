@@ -8,7 +8,7 @@ from inspect_ai.tool import bash, python
 
 from typing import Iterable, List
 import math
-from latex_scorer import latex_exact
+from custom_scorers import latex_exact, olympiadbench_scorer
 
 MATH_OLYMPIAD_ENGLISH_PATH = "data/T_human_English_Olympiad_Mathematics.csv"
 
@@ -18,22 +18,22 @@ response should be of the form "ANSWER: $ANSWER" (without quotes)
 where $ANSWER is the answer to the problem.
 
 {prompt}
+
+Remember to put your answer on its own line at the end in the form
+"ANSWER: $ANSWER" (without quotes) where $ANSWER is the answer to 
+the problem, and you do not need to use a \\boxed command or a \\displaystyle command.
 """.strip()
 
 
-def strip_list_wrapper(s: str) -> str:
-    s = s.strip()
-    if (s.startswith("['") and s.endswith("']")) or (
-        s.startswith('["') and s.endswith('"]')
-    ):
-        return s[2:-2]
-    return s
+def strip_wrappers(s: str) -> str:
+    CHARS = "[]''$"
+    return s.strip(CHARS)
 
 
 def record_to_sample(record):
     return Sample(
         input=record["question"],
-        target=strip_list_wrapper(record["final_answer"]),
+        target=strip_wrappers(record["final_answer"]),
         id=record["id"],
         metadata={
             "subfield": record["subfield"],
@@ -139,12 +139,13 @@ def agent(attempts: int = 1):
 @task
 def math_olympiad_english():
     dataset = load_math_olympiad_english()
-    subset = select_by_T_human_bins(dataset, n_bins=8, per_bin=1, log_space=True)
+    subset = list(filter(lambda s: s.metadata["answer_type"] == "Numerical", dataset))
+    subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=1, log_space=True)
     return Task(
         dataset=subset,
         # solver=[agent(), prompt_template(MATH_PROMPT_TEMPLATE)],
         solver=[prompt_template(MATH_PROMPT_TEMPLATE), generate()],
-        scorer=latex_exact(),
-        epochs=Epochs(8, [mean_score(), pass_at(8)]),
+        scorer=olympiadbench_scorer(),
+        epochs=Epochs(1, [mean_score(), pass_at(1)]),
         # config=GenerateConfig(temperature=0.7),
     )

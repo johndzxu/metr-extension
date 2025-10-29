@@ -86,7 +86,8 @@ class MathOlympiadPlotter:
         model_col: str = 'alias',
         title: str = "Model Success Rate vs Task Difficulty",
         show_trend: bool = True,
-        log_scale: bool = True
+        log_scale: bool = True,
+        n_bins: int = 10
     ) -> Figure:
 
         fig, ax = plt.subplots(figsize=(12, 7), dpi=100)
@@ -96,35 +97,66 @@ class MathOlympiadPlotter:
         models = sorted([m for m in df_filtered[model_col].unique() 
                         if m != 'Failed' and m != 'Unknown'])
         
-        # Plot each model
+
+        task_times = df_filtered.groupby('task_id')[time_col].first()
+        
+        min_time = max(task_times.min(), 0.1)
+        max_time = task_times.max()
+        log_bins = np.logspace(np.log10(min_time), np.log10(max_time), n_bins + 1)
+        
+        # Assign each task to a bin
+        task_bin_map = {}
+        for task_id, time in task_times.items():
+            bin_idx = np.digitize(time, log_bins) - 1
+            bin_idx = max(0, min(bin_idx, n_bins - 1))  # Clamp to valid range
+            task_bin_map[task_id] = bin_idx
+        
+
+        df_filtered['bin_idx'] = df_filtered['task_id'].map(task_bin_map)
+        
+        bin_centers = np.sqrt(log_bins[:-1] * log_bins[1:])
+        
         for model in models:
             model_df = df_filtered[df_filtered[model_col] == model]
             
-            # Aggregate by task
-            task_stats = model_df.groupby('task_id').agg({
-                time_col: 'first',
-                success_col: 'mean'
-            }).reset_index()
+            #average success rate per bin
+            bin_success_rates = []
+            bin_positions = []
+            bin_counts = []
             
-            # Get color
-            color = self.model_colors.get(model, '#757575')
+            for bin_idx in range(n_bins):
+                bin_data = model_df[model_df['bin_idx'] == bin_idx]
+                if len(bin_data) > 0:
+                    success_rate = bin_data[success_col].mean()
+                    bin_success_rates.append(success_rate)
+                    bin_positions.append(bin_centers[bin_idx])
+                    bin_counts.append(len(bin_data))
             
-            # Plot with larger markers
-            ax.scatter(task_stats[time_col], task_stats[success_col], 
-                      label=model, alpha=0.7, s=100, color=color, 
-                      edgecolors='black', linewidth=0.5)
+            if len(bin_positions) > 0:
+
+                color = self.model_colors.get(model, '#757575')
+                
+                sizes = np.array(bin_counts)
+                sizes = 50 + (sizes / sizes.max()) * 250
+                
+                ax.scatter(bin_positions, bin_success_rates, 
+                          label=model, alpha=0.7, s=sizes, color=color, 
+                          edgecolors='black', linewidth=0.5)
         
-        # Add trend line for all data
         if show_trend and len(df_filtered) > 5:
-            task_stats_all = df_filtered.groupby('task_id').agg({
-                time_col: 'first',
-                success_col: 'mean'
-            }).reset_index()
+            all_bin_success = []
+            all_bin_positions = []
             
-            times = task_stats_all[time_col].values
-            success = task_stats_all[success_col].values
+            for bin_idx in range(n_bins):
+                bin_data = df_filtered[df_filtered['bin_idx'] == bin_idx]
+                if len(bin_data) > 0:
+                    all_bin_success.append(bin_data[success_col].mean())
+                    all_bin_positions.append(bin_centers[bin_idx])
             
-            if len(np.unique(times)) > 1:
+            if len(all_bin_positions) > 1:
+                times = np.array(all_bin_positions)
+                success = np.array(all_bin_success)
+                
                 if log_scale:
                     log_times = np.log10(times)
                     slope, intercept, r_value, _, _ = stats.linregress(log_times, success)

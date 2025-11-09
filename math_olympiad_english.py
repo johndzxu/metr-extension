@@ -15,7 +15,7 @@ MATH_OLYMPIAD_ENGLISH_PATH = "data/T_human_English_Olympiad_Mathematics.csv"
 MATH_PROMPT_TEMPLATE = """
 Solve the following math problem step by step. The last line of your
 response should be of the form "ANSWER: $ANSWER" (without quotes)
-where $ANSWER is the answer to the problem. Use canonical LaTeX for the answer.
+where $ANSWER is the answer to the problem.
 
 
 {prompt}
@@ -118,12 +118,28 @@ def select_by_T_human_bins(
             idx = n_eff - 1
         bins[idx].append((s, t, x))
 
+    """
+    # --- print diagnostics: show T_human values per bin ---
+    print("\n\n\nT_human values by bin:")
+    for i, bucket in enumerate(bins):
+        if bucket:
+            t_vals = sorted([t for _, t, _ in bucket])
+            print(f"  Bin {i+1}/{n_eff} ({len(bucket)} items): {t_vals}")
+        else:
+            print(f"  Bin {i+1}/{n_eff}: empty")
+    """
+
     # --- deterministic pick: earliest by T_human, then id ---
     selected: List["Sample"] = []
+    print("\n\n\nSelected T_human per bin:")
     for bucket in bins:
         if not bucket:
+            print(f"  Bin /{n_eff}: empty")
             continue
         bucket.sort(key=lambda it: (it[1], _sid(it[0])))
+        picked = bucket[:per_bin]
+        t_vals = [t for _, t, _ in picked]
+        print(f"  Bin /{n_eff}: {t_vals}")
         selected.extend([it[0] for it in bucket[:per_bin]])
 
     return selected
@@ -141,12 +157,12 @@ def agent(attempts: int = 1):
 def math_olympiad_english():
     dataset = load_math_olympiad_english()
     subset = list(filter(lambda s: s.metadata["answer_type"] == "Numerical", dataset))
-    subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=1, log_space=True)
+    subset = select_by_T_human_bins(dataset, n_bins=4, per_bin=1, log_space=True)
     return Task(
         dataset=subset,
         # solver=[agent(), prompt_template(MATH_PROMPT_TEMPLATE)],
-        solver=[prompt_template(MATH_PROMPT_TEMPLATE), generate()],
+        solver=[prompt_template(MATH_PROMPT_TEMPLATE), generate(config=GenerateConfig(temperature=0.9))],
         scorer=olympiadbench_scorer(),
-        epochs=Epochs(1, [mean_score(), pass_at(1)]),
-        # config=GenerateConfig(temperature=0.7),
+        epochs=Epochs(5, [mean_score(), pass_at(1)]), # run 5 times per sample
+
     )

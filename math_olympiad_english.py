@@ -15,7 +15,8 @@ MATH_OLYMPIAD_ENGLISH_PATH = "data/T_human_English_Olympiad_Mathematics.csv"
 MATH_PROMPT_TEMPLATE = """
 Solve the following math problem step by step. The last line of your
 response should be of the form "ANSWER: $ANSWER" (without quotes)
-where $ANSWER is the answer to the problem.
+where $ANSWER is the answer to the problem. Use canonical LaTeX for the answer.
+
 
 {prompt}
 

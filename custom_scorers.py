@@ -50,8 +50,13 @@ def olympiadbench_scorer(precision: float = 1e-8):
     scorer = AutoScoringJudge()
     async def score(state, target):
         completion = getattr(getattr(state, "output", None), "completion", "") or ""
-        model_output = extract_answer_line(completion)
-        ground_truth = getattr(target, "text", "") or ""
+        model_output_raw = extract_answer_line(completion)
+        ground_truth_raw = getattr(target, "text", "") or ""
+
+        # Canonicalize both sides first
+
+        model_output = canonical_latex(model_output_raw)
+        ground_truth = canonical_latex(ground_truth_raw)
 
         result = scorer.judge(ground_truth, model_output, precision)
         return Score(

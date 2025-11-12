@@ -17,6 +17,7 @@ Solve the following math problem step by step. The last line of your
 response should be of the form "ANSWER: $ANSWER" (without quotes)
 where $ANSWER is the answer to the problem.
 
+
 {prompt}
 
 Remember to put your answer on its own line at the end in the form
@@ -117,12 +118,28 @@ def select_by_T_human_bins(
             idx = n_eff - 1
         bins[idx].append((s, t, x))
 
+    """
+    # --- print diagnostics: show T_human values per bin ---
+    print("\n\n\nT_human values by bin:")
+    for i, bucket in enumerate(bins):
+        if bucket:
+            t_vals = sorted([t for _, t, _ in bucket])
+            print(f"  Bin {i+1}/{n_eff} ({len(bucket)} items): {t_vals}")
+        else:
+            print(f"  Bin {i+1}/{n_eff}: empty")
+    """
+
     # --- deterministic pick: earliest by T_human, then id ---
     selected: List["Sample"] = []
+    print("\n\n\nSelected T_human per bin:")
     for bucket in bins:
         if not bucket:
+            print(f"  Bin /{n_eff}: empty")
             continue
         bucket.sort(key=lambda it: (it[1], _sid(it[0])))
+        picked = bucket[:per_bin]
+        t_vals = [t for _, t, _ in picked]
+        print(f"  Bin /{n_eff}: {t_vals}")
         selected.extend([it[0] for it in bucket[:per_bin]])
 
     return selected
@@ -144,6 +161,8 @@ def math_olympiad_english():
     )
     # subset = select_by_T_human_bins(dataset, n_bins=8, per_bin=1, log_space=True)
     subset = subset[:1]
+    #subset = list(filter(lambda s: s.metadata["answer_type"] == "Numerical", dataset))
+    subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=1, log_space=True)
     return Task(
         dataset=subset,
         solver=[agent(), prompt_template(MATH_PROMPT_TEMPLATE)],

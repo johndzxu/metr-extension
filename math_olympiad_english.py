@@ -139,13 +139,17 @@ def agent(attempts: int = 1):
 @task
 def math_olympiad_english():
     dataset = load_math_olympiad_english()
-    subset = list(filter(lambda s: s.metadata["answer_type"] == "Numerical", dataset))
-    subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=1, log_space=True)
+    subset = list(
+        filter(lambda s: s.metadata["is_multiple_answer"] == "False", dataset)
+    )
+    # subset = select_by_T_human_bins(dataset, n_bins=8, per_bin=1, log_space=True)
+    subset = subset[:1]
     return Task(
         dataset=subset,
-        # solver=[agent(), prompt_template(MATH_PROMPT_TEMPLATE)],
-        solver=[prompt_template(MATH_PROMPT_TEMPLATE), generate()],
+        solver=[agent(), prompt_template(MATH_PROMPT_TEMPLATE)],
+        # solver=[prompt_template(MATH_PROMPT_TEMPLATE), generate()],
         scorer=olympiadbench_scorer(),
-        epochs=Epochs(1, [mean_score(), pass_at(1)]),
+        sandbox="docker",
+        # epochs=Epochs(1, [mean_score(), pass_at(1)]),
         # config=GenerateConfig(temperature=0.7),
     )

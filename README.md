@@ -12,20 +12,9 @@
 
 ## TO DO
 
-Miguel
-- Fix Grader -> DONE
-- Get accuracy through multiple runs & adjust temperature -> DONE
-- Try different "answer_type"
-- Get Plots -> Function to convert to json (inspect)
-
-John
-- Getting the agent to work automatically
-
-Bill
-- SWE Validation
-
-Together - By weekend
-- Run Llama family
+- Each one runs 1 Model
+- Agentic setting (?)
+- 10 bins x 2 questions x 4 epochs
 
 ## Motivation
 

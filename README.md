@@ -12,9 +12,25 @@
 
 ## TO DO
 
-- Each one runs 1 Model
-- Agentic setting (?)
-- 10 bins x 2 questions x 4 epochs
+- Run More models
+
+- LLama 3.2 , 3.3, QWEN 2.5, QWEN 3.0, GPT5-NANO - Agentic             -> John
+
+- LLama 3.2 , 3.3, QWEN 2.5, QWEN 3.0, GPT5-NANO - Non-Agentic         -> Miguel
+
+- Graphs & Visualization & r2 coefs & per bin avg                      -> Bill
+
+- GPT Family -> Wait for Money
+
+
+
+
+
+
+
+
+
+
 
 ## Motivation
 

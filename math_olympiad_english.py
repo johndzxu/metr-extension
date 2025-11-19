@@ -159,7 +159,7 @@ def math_olympiad_english():
     subset = list(
         filter(lambda s: s.metadata["is_multiple_answer"] == "False", dataset)
     )
-    subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=2, log_space=True)
+    subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=5, log_space=True)
     return Task(
         dataset=subset,
         solver=[

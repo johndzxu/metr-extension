@@ -171,6 +171,7 @@ def math_olympiad_english():
         dataset=subset,
         solver=agent(),
         scorer=olympiadbench_scorer(),
+        sandbox="docker",
         epochs=Epochs(4, [mean_score(), pass_at(1)]),
     )
 

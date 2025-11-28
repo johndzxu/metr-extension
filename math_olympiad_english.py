@@ -25,6 +25,12 @@ Remember to put your answer on its own line at the end in the form
 the problem, and you do not need to use a \\boxed command or a \\displaystyle command.
 """.strip()
 
+REACT_PROMPT = """
+You are a math olypiad competition problem solver. You will be given a
+math problem, and you should reason step by step to arrive at the final answer. The final answer should be output on its own line in the form
+"ANSWER: $ANSWER" (without quotes) where $ANSWER is the answer to the problem.
+""".strip()
+
 
 def strip_wrappers(s: str) -> str:
     CHARS = "[]''$"
@@ -150,6 +156,7 @@ def agent(attempts: int = 1):
     return react(
         tools=[bash(timeout=180), python(timeout=180)],
         attempts=attempts,
+        prompt=REACT_PROMPT,
     )
 
 
@@ -162,8 +169,10 @@ def math_olympiad_english():
     subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=5, log_space=True)
     return Task(
         dataset=subset,
-        #solver=[ agent(), prompt_template(MATH_PROMPT_TEMPLATE), generate(config=GenerateConfig(temperature=0.9)),],
-        solver=[ prompt_template(MATH_PROMPT_TEMPLATE), generate(config=GenerateConfig(temperature=0.9)),],
+        solver=agent(),
         scorer=olympiadbench_scorer(),
+        sandbox="docker",
         epochs=Epochs(4, [mean_score(), pass_at(1)]),
     )
+
+# inspect eval math_olympiad_english.py@math_olympiad_english -M emulate_tools=true -M "provider={ 'sort': "throughput", "ignore": ["together/fp8"] }"

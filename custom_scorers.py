@@ -98,6 +98,30 @@ def latex_exact():
         )
     return score
 
+PHRASE = "The final answer is "
+
+def clean_output(text: str) -> str:
+    if not text:
+        return ""
+    
+    # If the marker appears, keep only what comes after it
+    idx = text.find(PHRASE)
+    if idx != -1:
+        text = text[idx + len(PHRASE):]
+
+    # Remove the phrase anywhere else, just in case
+    text = text.replace(PHRASE, "")
+
+    # Strip spaces/newlines on the right first
+    text = text.rstrip()
+
+    # Remove a trailing period (e.g. "100.")
+    if text.endswith("."):
+        text = text[:-1]
+
+    # Final trim
+    return text.strip()
+
 @scorer(metrics=[accuracy(), stderr()])
 def olympiadbench_scorer(precision: float = 1e-8):
     scorer = AutoScoringJudge()
@@ -105,6 +129,14 @@ def olympiadbench_scorer(precision: float = 1e-8):
         completion = getattr(getattr(state, "output", None), "completion", "") or ""
         model_output_raw = extract_answer_line(completion)
         ground_truth_raw = getattr(target, "text", "") or ""
+
+
+        print(model_output_raw)
+
+        model_output_raw = clean_output(model_output_raw)
+
+        
+
 
         # Canonicalize both sides first
 

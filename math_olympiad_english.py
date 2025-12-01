@@ -169,9 +169,10 @@ def math_olympiad_english():
     subset = select_by_T_human_bins(dataset, n_bins=10, per_bin=5, log_space=True)
     return Task(
         dataset=subset,
-        #solver=agent(),
+        solver=[ prompt_template(MATH_PROMPT_TEMPLATE), generate(config=GenerateConfig(temperature=0.9)),], #non-agentic
+        #solver=agent(), #agentic
         scorer=olympiadbench_scorer(),
-        #sandbox="docker",
+        sandbox="docker",
         epochs=Epochs(4, [mean_score(), pass_at(1)]),
     )
 

@@ -7,7 +7,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-EVAL_ZIP = Path(r"logs")
+EVAL_ZIP = Path(r"../logs")
 
 def read_json_from_zip(zp: zipfile.ZipFile, name: str) -> Any:
     with zp.open(name) as f:

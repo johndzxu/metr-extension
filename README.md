@@ -14,18 +14,9 @@
 
 - Run More models
 
-- LLama 3.2 , 3.3, QWEN 2.5, QWEN 3.0, GPT5-NANO - Agentic             -> John
+- gpt-5-mini, gpt-5.1, o3 - Agentic
 
-- LLama 3.2 , 3.3, QWEN 2.5, QWEN 3.0, GPT5-NANO - Non-Agentic         -> Miguel
-
-- Graphs & Visualization & r2 coefs & per bin avg                      -> Bill
-
-- GPT Family -> Wait for Money
-
-
-
-
-
+- gpt-5.1- Non-Agentic
 
 
 

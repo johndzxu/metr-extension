@@ -10,6 +10,22 @@
 - Jay Gala ( jay.gala@mila.quebec )
 - Fengyuan Liu ( fengyuan.liu@mila.quebec )
 
+<<<<<<< HEAD
+=======
+## TO DO
+
+- Run More models
+
+- gpt-5-mini, gpt-5.1, o3 - Agentic
+
+- gpt-5.1- Non-Agentic
+
+
+
+
+
+
+>>>>>>> d196b4bc2250379a6fea551b8da7861a20f652f8
 ## Motivation
 
 Recent work by METR Kwa et al. (2025) discusses the task-completion time horizon (the longest human-duration task an AI can complete with fixed success probability) as a metric of AI capability growth. They found that over the six years this horizon has grown exponentially. However, this progress has been measured almost entirely in software domains. To address this gap, we intend to measure AI performance on Olympiad-level mathematics reasoning, mapping success to human-equivalent time, to test if the same scaling law holds beyond programming tasks.

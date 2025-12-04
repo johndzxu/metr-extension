@@ -10,31 +10,9 @@
 - Jay Gala ( jay.gala@mila.quebec )
 - Fengyuan Liu ( fengyuan.liu@mila.quebec )
 
-## TO DO
-
-- Run More models
-
-- LLama 3.2 , 3.3, QWEN 2.5, QWEN 3.0, GPT5-NANO - Agentic             -> John
-
-- LLama 3.2 , 3.3, QWEN 2.5, QWEN 3.0, GPT5-NANO - Non-Agentic         -> Miguel
-
-- Graphs & Visualization & r2 coefs & per bin avg                      -> Bill
-
-- GPT Family -> Wait for Money
-
-
-
-
-
-
-
-
-
-
-
 ## Motivation
 
-Recent work by METR Kwa et al. (2025) discusses the task-completion time horizon (the longest human-duration task an AI can complete with fixed success probability) as a metric of AI capability growth. They found that over the six years this horizon has grown exponentially. However, this progress has been measured almost entirely in software domains. To address this gap, we intend to measure AI performance on Olympiad-level mathematics and physics reasoning, mapping success to human-equivalent time, to test if the same scaling law holds beyond programming tasks.
+Recent work by METR Kwa et al. (2025) discusses the task-completion time horizon (the longest human-duration task an AI can complete with fixed success probability) as a metric of AI capability growth. They found that over the six years this horizon has grown exponentially. However, this progress has been measured almost entirely in software domains. To address this gap, we intend to measure AI performance on Olympiad-level mathematics reasoning, mapping success to human-equivalent time, to test if the same scaling law holds beyond programming tasks.
 
 ## Setup
 

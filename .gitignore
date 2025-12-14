@@ -214,3 +214,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+./math_olympiad_analysis/agentic/
+./math_olympiad_analysis/non-agentic/
+
